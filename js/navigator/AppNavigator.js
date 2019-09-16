@@ -7,6 +7,8 @@ import { createReactNavigationReduxMiddleware, createReduxContainer } from 'reac
 import WelcomePage from '../page/WelcomePage';
 import HomePage from '../page/HomePage';
 import DetailPage from '../page/DetailPage';
+import FetchDemoPage from '../page/FetchDemoPage';
+import AsyncStorageDemoPage from '../page/AsyncStorageDemoPage';
 export const rootCom = "Init";//设置跟路由
 
 const InitNavigator = createStackNavigator({
@@ -27,6 +29,18 @@ const MainNavigator = createStackNavigator({
     },
     DetailPage: {
         screen: DetailPage,
+        navigationOptions: {
+            // header: null //禁用bar
+        }
+    },
+    FetchDemoPage: {
+        screen: FetchDemoPage,
+        navigationOptions: {
+            // header: null //禁用bar
+        }
+    },
+    AsyncStorageDemoPage: {
+        screen: AsyncStorageDemoPage,
         navigationOptions: {
             // header: null //禁用bar
         }

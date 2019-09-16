@@ -1,11 +1,32 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { Button, Text, StyleSheet, View } from 'react-native'
 
 export default class MyPage extends Component {
     render() {
         return (
             <View style={styles.container}>
                 <Text style={styles.welcome}> MyPage </Text>
+                <Text onPress={() => {
+                    NavigationUtil.goPage({
+                        navigation: this.props.navigation
+                    }, 'DetailPage')
+                }}>to DetailPage</Text>
+                <Button
+                    title={'go fetch'}
+                    onPress={() => {
+                        NavigationUtil.goPage({
+                            navigation: this.props.navigation
+                        }, 'FetchDemoPage')
+                    }}
+                />
+                <Button
+                    title={'go AsyncStorage'}
+                    onPress={() => {
+                        NavigationUtil.goPage({
+                            navigation: this.props.navigation
+                        }, 'AsyncStorageDemoPage')
+                    }}
+                />
             </View>
         )
     }
