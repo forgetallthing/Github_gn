@@ -15,6 +15,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Entypo from 'react-native-vector-icons/Entypo'
 import NavigationUtil from '../navigator/NavigationUtil'
+import { connect } from 'react-redux'
 
 const TABS = {
     PopularPage: {
@@ -72,18 +73,25 @@ const TABS = {
 }
 
 //动态配置底部tabbar
-export default class DynamicTabNavigator extends Component {
-    _tanNabigator() {
+class DynamicTabNavigator extends Component {
+    _tabNabigator() {
+        if (this.Tabs) { 
+            return this.Tabs 
+        }
         const { PopularPage, TrendingPage, FavoritePage, MyPage } = TABS;
         //此处可通过用户权限控制底部tab的显示
         const tabs = { PopularPage, TrendingPage, FavoritePage, MyPage }
-        return createBottomTabNavigator(tabs, {
-            tabBarComponent: TabBarComponent
-        })
+        return this.Tabs = createAppContainer(createBottomTabNavigator(tabs, {
+            tabBarComponent: props => {
+                return <TabBarComponent
+                    theme={this.props.theme}
+                    {...props}
+                />
+            }
+        }))
     }
     render() {
-        NavigationUtil.navigation = this.props.navigation;
-        const Tab = createAppContainer(this._tanNabigator());
+        const Tab = this._tabNabigator();
         return <Tab />
     }
 }
@@ -97,31 +105,17 @@ class TabBarComponent extends React.Component {
         }
     }
     render() {
-        const { routes, index } = this.props.navigation.state;
-        if (routes[index].params) {
-            const { theme } = routes[index].params;
-            //以最新的更新时间为主，防止被其他tab之前的修改覆盖掉
-            if (theme && theme.updateTime > this.theme.updateTime) {
-                this.theme = theme;
-            }
-        }
+
         return <BottomTabBar
             {...this.props}
-            activeTintColor={this.theme.tintColor || this.props.activeTintColor}
+            activeTintColor={this.props.theme}
         />
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: "#F5FCFF"
-    },
-    welcome: {
-        fontSize: 20,
-        alignItems: 'center',
-        margin: 10
-    }
-})
+const mapStateToProps = state => ({
+    theme: state.theme.theme,//v2
+});
+
+/** * 3.连接 React 组件与 Redux store */
+export default connect(mapStateToProps)(DynamicTabNavigator);
