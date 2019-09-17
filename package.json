@@ -8,8 +8,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.6.1",
+    "GitHubTrending": "^3.1.1",
     "react": "16.8.6",
     "react-native": "0.60.5",
+    "react-native-easy-toast": "^1.2.0",
     "react-native-gesture-handler": "^1.4.1",
     "react-native-reanimated": "^1.2.0",
     "react-native-screens": "^2.0.0-alpha.3",
@@ -30,6 +33,7 @@
     "eslint": "^6.3.0",
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.0",
+    "prop-types": "^15.7.2",
     "react-test-renderer": "16.8.6",
     "redux-devtools": "^3.5.0"
   },

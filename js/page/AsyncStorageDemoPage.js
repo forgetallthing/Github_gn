@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Button, Text, StyleSheet, View, TextInput, AsyncStorage } from 'react-native'
+import { Button, Text, StyleSheet, View, TextInput } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage';
 const KEY = 'save_key';
 
 export default class AsyncStorageDemoPage extends Component {
@@ -42,26 +43,26 @@ export default class AsyncStorageDemoPage extends Component {
         )
     }
 
-    doSave() {
-        AsyncStorage.setItem(KEY, this.value, e => {
-            e && console.log(e.toString())
-        })
-    }
+    // doSave() {
+    //     AsyncStorage.setItem(KEY, this.value, e => {
+    //         e && console.log(e.toString())
+    //     })
+    // }
 
-    doRemove() {
-        AsyncStorage.removeItem(KEY, e => {
-            e && console.log(e.toString())
-        })
-    }
+    // doRemove() {
+    //     AsyncStorage.removeItem(KEY, e => {
+    //         e && console.log(e.toString())
+    //     })
+    // }
 
-    getData() {
-        AsyncStorage.getItem(KEY, (e, value) => {
-            this.setState({
-                showText: value
-            })
-            e && console.log(e.toString())
-        })
-    }
+    // getData() {
+    //     AsyncStorage.getItem(KEY, (e, value) => {
+    //         this.setState({
+    //             showText: value
+    //         })
+    //         e && console.log(e.toString())
+    //     })
+    // }
 }
 
 const styles = StyleSheet.create({
