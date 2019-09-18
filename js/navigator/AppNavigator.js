@@ -30,7 +30,7 @@ const MainNavigator = createStackNavigator({
     DetailPage: {
         screen: DetailPage,
         navigationOptions: {
-            // header: null //禁用bar
+            header: null //禁用bar
         }
     },
     FetchDemoPage: {
