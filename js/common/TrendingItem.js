@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native'
 import HTMLView from 'react-native-htmlview'
 import BaseItem from './BaseItem';
+import Dimensions from 'Dimensions'
+
+const width = Math.floor(Dimensions.get('window').width);
 
 export default class TrendingItem extends BaseItem {
     render() {
@@ -10,7 +13,7 @@ export default class TrendingItem extends BaseItem {
         if (!item) return null;
         let description = '<p>' + item.description + '</p>';
         return (
-            <TouchableOpacity  
+            <TouchableOpacity
                 onPress={() => this.onItemClick()}
             >
                 <View style={styles.cell_container}>
@@ -48,6 +51,7 @@ export default class TrendingItem extends BaseItem {
 
 const styles = StyleSheet.create({
     cell_container: {
+        width: width,
         backgroundColor: 'white',
         padding: 10,
         marginLeft: 5,

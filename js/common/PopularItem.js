@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native'
 import BaseItem from './BaseItem';
+import Dimensions from 'Dimensions'
+
+const width = Math.floor(Dimensions.get('window').width);
 
 export default class PopularItem extends BaseItem {
     render() {
@@ -12,7 +15,7 @@ export default class PopularItem extends BaseItem {
                 onPress={() => this.onItemClick()}
             >
                 <View style={styles.cell_container}>
-                    <Text>{item.full_name}</Text>
+                    <Text style={{ flex: 1 }}>{item.full_name}</Text>
                     <Text>{item.description}</Text>
                     <View style={styles.row}>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -35,6 +38,7 @@ export default class PopularItem extends BaseItem {
 
 const styles = StyleSheet.create({
     cell_container: {
+        width: width,
         backgroundColor: 'white',
         padding: 10,
         marginLeft: 5,

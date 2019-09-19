@@ -15,6 +15,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import Entypo from 'react-native-vector-icons/Entypo'
 import NavigationUtil from '../navigator/NavigationUtil'
 import { connect } from 'react-redux'
+import EventBus from 'react-native-event-bus'
+import EventTypes from '../util/EventTypes'
 
 const TABS = {
     PopularPage: {
@@ -74,8 +76,8 @@ const TABS = {
 //动态配置底部tabbar
 class DynamicTabNavigator extends Component {
     _tabNabigator() {
-        if (this.Tabs) { 
-            return this.Tabs 
+        if (this.Tabs) {
+            return this.Tabs
         }
         const { PopularPage, TrendingPage, FavoritePage, MyPage } = TABS;
         //此处可通过用户权限控制底部tab的显示
@@ -91,7 +93,15 @@ class DynamicTabNavigator extends Component {
     }
     render() {
         const Tab = this._tabNabigator();
-        return <Tab />
+        return <Tab
+            onNavigationStateChange={(prevState, newState, action) => {
+                //发送底部tab切换的事件
+                EventBus.getInstance().fireEvent(EventTypes.bottom_tab_select, {
+                    from: prevState.index,
+                    to: newState.index,
+                })
+            }}
+        />
     }
 }
 

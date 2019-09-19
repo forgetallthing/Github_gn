@@ -68,6 +68,14 @@ export default function onAction(state = defaultState, action) {
                     pageIndex: action.pageIndex,
                 },
             }
+        case Types.TRENDING_FLUSH_FAVORITE://下拉刷新失败
+            return {
+                ...state,
+                [action.storeName]: {
+                    ...state[action.storeName],
+                    projectModels: action.projectModels,
+                },
+            }
         default:
             return state;
     }

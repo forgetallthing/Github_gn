@@ -16,9 +16,9 @@ import Toast from 'react-native-easy-toast'
 import FavoriteDao from '../expand/dao/FavoriteDao'
 import { FLAG_STORAGE } from '../expand/dao/DataStore';
 import FavoriteUtil from '../util/FavoriteUtil';
+import EventBus from 'react-native-event-bus'
+import EventTypes from '../util/EventTypes'
 
-const URL = `https://api.github.com/search/repositories?q=`;
-const QUERY_STR = `&sort=stars`;
 const THEME_COLOR = "#678";
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
@@ -56,7 +56,6 @@ export default class FavoritePage extends Component {
             tabBarOptions: {
                 tabStyle: styles.tabStyle,
                 upperCaseLabel: false,
-                scrollEnabled: true,
                 style: {
                     backgroundColor: "#678",
                     height: 50
@@ -73,7 +72,6 @@ export default class FavoritePage extends Component {
     }
 }
 
-const pageSize = 15;
 class FavoriteTab extends Component {
     constructor(props) {
         super(props);
@@ -82,7 +80,15 @@ class FavoriteTab extends Component {
         this.favoriteDao = new FavoriteDao(flag);
     }
     componentDidMount() {
-        this.loadData()
+        this.loadData();
+        EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.listener = data => {
+            if (data.to === 2) {
+                this.loadData(false)
+            }
+        })
+    }
+    componentWillUnmount() {
+        EventBus.getInstance().removeListener(this.listener)
     }
     _store() {
         const { favorite } = this.props;
@@ -100,6 +106,14 @@ class FavoriteTab extends Component {
         const { onLoadFavoriteData } = this.props;
         onLoadFavoriteData(this.storeName, isShowLoading);
     }
+    onFavorite(item, isFavorite) {
+        FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.props.flag);
+        if (this.storeName === FLAG_STORAGE.flag_popular) {
+            EventBus.getInstance().fireEvent(EventTypes.favorite_changed_popular);
+        } else {
+            EventBus.getInstance().fireEvent(EventTypes.favoriteChanged_trending);
+        }
+    }
     renderItem(data) {
         const item = data.item;
         const Item = this.storeName === FLAG_STORAGE.flag_popular ? PopularItem : TrendingItem;
@@ -112,7 +126,7 @@ class FavoriteTab extends Component {
                     callback,
                 }, 'DetailPage');
             }}
-            onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, this.storeName)}
+            onFavorite={(item, isFavorite) => this.onFavorite(item, isFavorite)}
         />;
     }
     render() {

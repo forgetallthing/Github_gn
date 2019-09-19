@@ -20,6 +20,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import FavoriteDao from '../expand/dao/FavoriteDao'
 import { FLAG_STORAGE } from '../expand/dao/DataStore';
 import FavoriteUtil from '../util/FavoriteUtil';
+import EventBus from 'react-native-event-bus'
+import EventTypes from '../util/EventTypes'
 
 const EVENT_TYPE_TIME_SPAN_CHANGE = "EVENT_TYPE_TIME_SPAN_CHANGE";
 const URL = `https://github.com/trending/`;
@@ -131,6 +133,7 @@ class TrendingTab extends Component {
         const { tabLabel, timeSpan } = this.props;
         this.storeName = tabLabel;
         this.timeSpan = timeSpan;
+        this.isFavoriteChange = false;
     }
     componentDidMount() {
         this.loadData();
@@ -138,9 +141,19 @@ class TrendingTab extends Component {
             this.timeSpan = timeSpan;
             this.loadData();
         })
+        EventBus.getInstance().addListener(EventTypes.favoriteChanged_trending, this.favoriteChangeListener = () => {
+            this.isFavoriteChanged = true;
+        });
+        EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.bottomTabSelectListener = (data) => {
+            if (data.to === 1 && this.isFavoriteChanged) {
+                this.loadData(null, true);
+            }
+        })
     }
     componentWillUnmount() {
         if (this.timeSpanChangeListener) this.timeSpanChangeListener.remove();
+        EventBus.getInstance().removeListener(this.favoriteChangeListener);
+        EventBus.getInstance().removeListener(this.bottomTabSelectListener);
     }
     _store() {
         const { trending } = this.props;
@@ -155,14 +168,16 @@ class TrendingTab extends Component {
         }
         return store
     }
-    loadData(loadMore) {
-        const { onRefreshTrending, onLoadMoreTrending } = this.props;
+    loadData(loadMore,refreshFavorite) {
+        const { onRefreshTrending, onLoadMoreTrending, onFlushTrendingFavorite } = this.props;
         const url = this.genFetchUrl(this.storeName);
         const store = this._store();
         if (loadMore) {
             onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao, callback => {
                 this.refs.toast.show('没有更多了')
             })
+        } else if (refreshFavorite) {
+            onFlushTrendingFavorite(this.storeName, store.pageIndex, pageSize, store.items, favoriteDao)
         } else {
             onRefreshTrending(this.storeName, url, pageSize, favoriteDao)
         }
@@ -245,7 +260,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
     onRefreshTrending: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshTrending(storeName, url, pageSize, favoriteDao)),
-    onLoadMoreTrending: (storeName, pageIndex, pageSize, items, favoriteDao, callback) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, favoriteDao, callback))
+    onLoadMoreTrending: (storeName, pageIndex, pageSize, items, favoriteDao, callback) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, favoriteDao, callback)),
+    onFlushTrendingFavorite: (storeName, pageIndex, pageSize, items, favoriteDao) => dispatch(actions.onFlushTrendingFavorite(storeName, pageIndex, pageSize, items, favoriteDao)),
 })
 
 const TrendingTabPage = connect(mapStateToProps, mapDispatchToProps)(TrendingTab)
