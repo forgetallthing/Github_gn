@@ -10,7 +10,7 @@ const THEME_COLOR = "#678";
 export default class MyPage extends Component {
 
     getItem(menu) {
-        const {theme} = this.props;
+        // const {theme} = this.props;
         return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
     }
 
@@ -58,6 +58,37 @@ export default class MyPage extends Component {
                     </TouchableOpacity>
                     <View style={GlobalStyles.line}></View>
                     {this.getItem(MORE_MENU.Tutorial)}
+                    {/*趋势管理*/}
+                    <Text style={styles.groupTitle}>趋势管理</Text>
+                    {/*自定义语言*/}
+                    {this.getItem(MORE_MENU.Custom_Language)}
+                    {/*语言排序*/}
+                    <View style={GlobalStyles.line}/>
+                    {this.getItem(MORE_MENU.Sort_Language)}
+
+                    {/*最热管理*/}
+                    <Text style={styles.groupTitle}>最热管理</Text>
+                    {/*自定义标签*/}
+                    {this.getItem(MORE_MENU.Custom_Key)}
+                    {/*标签排序*/}
+                    <View style={GlobalStyles.line}/>
+                    {this.getItem(MORE_MENU.Sort_Key)}
+                    {/*标签移除*/}
+                    <View style={GlobalStyles.line}/>
+                    {this.getItem(MORE_MENU.Remove_Key)}
+
+                    {/*设置*/}
+                    <Text style={styles.groupTitle}>设置</Text>
+                    {/*自定义主题*/}
+                    {this.getItem(MORE_MENU.Custom_Theme)}
+                    {/*关于作者*/}
+                    <View style={GlobalStyles.line}/>
+                    {this.getItem(MORE_MENU.About_Author)}
+                    <View style={GlobalStyles.line}/>
+                    {/*反馈*/}
+                    {this.getItem(MORE_MENU.Feedback)}
+                    {/* <View style={GlobalStyles.line}/>
+                    {this.getItem(MORE_MENU.CodePush)} */}
                 </ScrollView>
             </View>
         )
