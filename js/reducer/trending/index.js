@@ -4,15 +4,15 @@ const defaultState = {
 }
 
 /**
- * popular:{
+ * trending:{
  *   java:{
- *       items:[],
+ *       projectModels:[],
  *       isLoading:false
  *   }
  *   IOS:{
- *       items:[],
+ *       projectModels:[],
  *       isLoading:false
- *   }
+ *   }...
  * }
  * @param {*} state 
  * @param {*} action 
@@ -25,7 +25,7 @@ export default function onAction(state = defaultState, action) {
                 [action.storeName]: {
                     ...state[action.storeName],
                     items: action.items,//原始数据
-                    projectModes: action.projectModes,//本次要展示的数据
+                    projectModels: action.projectModels,//本次要展示的数据
                     hideLoadingMore: false,
                     isLoading: false,
                     pageIndex: action.pageIndex,
@@ -53,7 +53,7 @@ export default function onAction(state = defaultState, action) {
                 ...state,
                 [action.storeName]: {
                     ...state[action.storeName],
-                    projectModes: action.projectModes,
+                    projectModels: action.projectModels,
                     hideLoadingMore: false,
                     pageIndex: action.pageIndex,
                 },
@@ -63,7 +63,7 @@ export default function onAction(state = defaultState, action) {
                 ...state,
                 [action.storeName]: {
                     ...state[action.storeName],
-                    projectModes: action.projectModes,
+                    projectModels: action.projectModels,
                     hideLoadingMore: true,
                     pageIndex: action.pageIndex,
                 },

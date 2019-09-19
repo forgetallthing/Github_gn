@@ -17,11 +17,16 @@ import NavigationBar from '../common/NavigationBar'
 import Toast from 'react-native-easy-toast'
 import TrendingDialog, { TimeSpans } from '../common/TrendingDialog'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import FavoriteDao from '../expand/dao/FavoriteDao'
+import { FLAG_STORAGE } from '../expand/dao/DataStore';
+import FavoriteUtil from '../util/FavoriteUtil';
 
 const EVENT_TYPE_TIME_SPAN_CHANGE = "EVENT_TYPE_TIME_SPAN_CHANGE";
 const URL = `https://github.com/trending/`;
 const QUERY_STR = `&sort=stars`;
 const THEME_COLOR = "#678";
+const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
+
 export default class TrendingPage extends Component {
     constructor(props) {
         super(props)
@@ -144,7 +149,7 @@ class TrendingTab extends Component {
             store = {
                 items: [],
                 isLoading: false,
-                projectModes: [],
+                projectModels: [],
                 hideLoadingMore: true
             }
         }
@@ -155,11 +160,11 @@ class TrendingTab extends Component {
         const url = this.genFetchUrl(this.storeName);
         const store = this._store();
         if (loadMore) {
-            onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items, callback => {
+            onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao, callback => {
                 this.refs.toast.show('没有更多了')
             })
         } else {
-            onRefreshTrending(this.storeName, url, pageSize)
+            onRefreshTrending(this.storeName, url, pageSize, favoriteDao)
         }
     }
     genFetchUrl(key) {
@@ -170,11 +175,15 @@ class TrendingTab extends Component {
     }
     renderItem(data) {
         const item = data.item;
-        return <TrendingItem item={item} onSelect={() => {
+        return <TrendingItem projectModel={item} onSelect={(callback) => {
             NavigationUtil.goPage({
-                projectModel: item
+                projectModel: item,
+                flag: FLAG_STORAGE.flag_trending,
+                callback,
             }, "DetailPage")
-        }}></TrendingItem>
+        }}
+            onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, FLAG_STORAGE.flag_trending)}
+        ></TrendingItem>
     }
     genIndicator() {
         return this._store().hideLoadingMore ? null :
@@ -190,9 +199,9 @@ class TrendingTab extends Component {
         return (
             <View style={styles.container}>
                 <FlatList
-                    data={store.projectModes}
+                    data={store.projectModels}
                     renderItem={data => this.renderItem(data)}
-                    keyExtractor={item => "" + (item.id || item.fullName)}
+                    keyExtractor={item => "" + (item.item.id || item.item.fullName)}
                     refreshControl={
                         <RefreshControl
                             title={"Loading"}
@@ -235,8 +244,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
-    onRefreshTrending: (storeName, url, pageSize) => dispatch(actions.onRefreshTrending(storeName, url, pageSize)),
-    onLoadMoreTrending: (storeName, pageIndex, pageSize, items, callback) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, callback))
+    onRefreshTrending: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onRefreshTrending(storeName, url, pageSize, favoriteDao)),
+    onLoadMoreTrending: (storeName, pageIndex, pageSize, items, favoriteDao, callback) => dispatch(actions.onLoadMoreTrending(storeName, pageIndex, pageSize, items, favoriteDao, callback))
 })
 
 const TrendingTabPage = connect(mapStateToProps, mapDispatchToProps)(TrendingTab)
