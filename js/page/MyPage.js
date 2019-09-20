@@ -4,6 +4,9 @@ import NavigationBar from '../common/NavigationBar'
 import { MORE_MENU } from '../common/MORE_MENU';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import GlobalStyles from '../res/styles/GlobalStyles';
+import ViewUtil from '../util/ViewUtil'
+import NavigationUtil from '../navigator/NavigationUtil'
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 
 const THEME_COLOR = "#678";
 
@@ -15,7 +18,33 @@ export default class MyPage extends Component {
     }
 
     onClick(menu) {
-
+        let RouterName, params = {};
+        switch (menu) {
+            case MORE_MENU.Tutorial:
+                RouterName = 'WebViewPage';
+                params.title = '教程';
+                params.url = 'https://coding.m.imooc.com/classindex.html?cid=89';
+                break;
+            case MORE_MENU.About:
+                RouterName = 'AboutPage';
+                break;
+            case MORE_MENU.About_Author:
+                RouterName = 'AboutMePage';
+                break;
+            case MORE_MENU.Sort_Key:
+                RouterName = 'SortKeyPage';
+                break;
+            case MORE_MENU.Custom_Key:
+            case MORE_MENU.Custom_Language:
+            case MORE_MENU.Remove_Key:
+                RouterName = 'CustomkeyPage';
+                params.isRemoveKey = menu === MORE_MENU.Remove_Key;
+                params.flag = menu !== MORE_MENU.Custom_Language ? FLAG_LANGUAGE.flag_key : FLAG_LANGUAGE.flag_language;
+                break;
+        }
+        if (RouterName) {
+            NavigationUtil.goPage(params, RouterName);
+        }
     }
 
     render() {
@@ -34,6 +63,7 @@ export default class MyPage extends Component {
                 {navigationBar}
                 <ScrollView>
                     <TouchableOpacity
+                        style={styles.item}
                         onPress={() => this.onClick(MORE_MENU.About)}
                     >
                         <View style={styles.about_left}>
@@ -42,7 +72,7 @@ export default class MyPage extends Component {
                                 size={40}
                                 style={{
                                     marginRight: 10,
-                                    color: THEME_COLOR,
+                                    // color: theme.themeColor,
                                 }}
                             />
                             <Text>GitHub Popular</Text>
@@ -53,7 +83,7 @@ export default class MyPage extends Component {
                             style={{
                                 marginRight: 10,
                                 alignSelf: 'center',
-                                color: THEME_COLOR,
+                                // color: theme.themeColor,
                             }} />
                     </TouchableOpacity>
                     <View style={GlobalStyles.line}></View>
@@ -63,7 +93,7 @@ export default class MyPage extends Component {
                     {/*自定义语言*/}
                     {this.getItem(MORE_MENU.Custom_Language)}
                     {/*语言排序*/}
-                    <View style={GlobalStyles.line}/>
+                    <View style={GlobalStyles.line} />
                     {this.getItem(MORE_MENU.Sort_Language)}
 
                     {/*最热管理*/}
@@ -71,10 +101,10 @@ export default class MyPage extends Component {
                     {/*自定义标签*/}
                     {this.getItem(MORE_MENU.Custom_Key)}
                     {/*标签排序*/}
-                    <View style={GlobalStyles.line}/>
+                    <View style={GlobalStyles.line} />
                     {this.getItem(MORE_MENU.Sort_Key)}
                     {/*标签移除*/}
-                    <View style={GlobalStyles.line}/>
+                    <View style={GlobalStyles.line} />
                     {this.getItem(MORE_MENU.Remove_Key)}
 
                     {/*设置*/}
@@ -82,9 +112,9 @@ export default class MyPage extends Component {
                     {/*自定义主题*/}
                     {this.getItem(MORE_MENU.Custom_Theme)}
                     {/*关于作者*/}
-                    <View style={GlobalStyles.line}/>
+                    <View style={GlobalStyles.line} />
                     {this.getItem(MORE_MENU.About_Author)}
-                    <View style={GlobalStyles.line}/>
+                    <View style={GlobalStyles.line} />
                     {/*反馈*/}
                     {this.getItem(MORE_MENU.Feedback)}
                     {/* <View style={GlobalStyles.line}/>

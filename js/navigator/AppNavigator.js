@@ -7,8 +7,11 @@ import { createReactNavigationReduxMiddleware, createReduxContainer } from 'reac
 import WelcomePage from '../page/WelcomePage';
 import HomePage from '../page/HomePage';
 import DetailPage from '../page/DetailPage';
-import FetchDemoPage from '../page/FetchDemoPage';
-import AsyncStorageDemoPage from '../page/AsyncStorageDemoPage';
+import WebViewPage from '../page/WebViewPage';
+import AboutPage from '../page/about/AboutPage';
+import AboutMePage from '../page/about/AboutMePage';
+import CustomkeyPage from '../page/CustomkeyPage';
+import SortKeyPage from '../page/SortKeyPage';
 export const rootCom = "Init";//设置跟路由
 
 const InitNavigator = createStackNavigator({
@@ -33,18 +36,36 @@ const MainNavigator = createStackNavigator({
             header: null //禁用bar
         }
     },
-    FetchDemoPage: {
-        screen: FetchDemoPage,
+    WebViewPage: {
+        screen: WebViewPage,
         navigationOptions: {
-            // header: null //禁用bar
+            header: null //禁用bar
         }
     },
-    AsyncStorageDemoPage: {
-        screen: AsyncStorageDemoPage,
+    AboutPage: {
+        screen: AboutPage,
         navigationOptions: {
-            // header: null //禁用bar
+            header: null //禁用bar
         }
-    }
+    },
+    AboutMePage: {
+        screen: AboutMePage,
+        navigationOptions: {
+            header: null //禁用bar
+        }
+    },
+    CustomkeyPage: {
+        screen: CustomkeyPage,
+        navigationOptions: {
+            header: null //禁用bar
+        }
+    },
+    SortKeyPage: {
+        screen: SortKeyPage,
+        navigationOptions: {
+            header: null //禁用bar
+        }
+    },
 })
 
 export const RootNavigator = createSwitchNavigator({

@@ -6,9 +6,7 @@ import ViewUtil from '../util/ViewUtil'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import BackPressComponent from '../common/BackPressComponent'
 import NavigationUtil from '../navigator/NavigationUtil';
-import FavoriteDao from '../expand/dao/FavoriteDao'
 
-const TRENDING_URL = "https://github.com/";
 const THEME_COLOR = "#678";
 
 export default class WebViewPage extends Component {
@@ -47,22 +45,19 @@ export default class WebViewPage extends Component {
             NavigationUtil.goBack(this.props.navigation);
         }
     }
-   
+
     onNavigationStateChange(navState) {
         this.setState({
             canGoBack: navState.canGoBack,
             url: navState.url,
         })
     }
-    
+
     render() {
-        const titleLayoutStyle = this.state.title.length > 20 ? { paddingRight: 30 } : null;
         let navigationBar = <NavigationBar
-            leftButton={ViewUtil.getLeftBackButton(() => this.onBack())}
             title={this.state.title}
-            titleLayoutStyle={titleLayoutStyle}
             style={{ backgroundColor: THEME_COLOR }}
-            rightButton={this.renderRightButton()}
+            leftButton={ViewUtil.getLeftBackButton(()=>this.onBackPress())}
         />
         return (
             <View style={styles.container}>
