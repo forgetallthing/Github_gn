@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, TouchableHighlight, StyleSheet, View, Text} from 'react-native';
+import {Alert, TouchableHighlight, StyleSheet, View, Text,ScrollView} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../action/index'
 import NavigationUtil from '../navigator/NavigationUtil'
@@ -10,7 +10,7 @@ import ViewUtil from "../util/ViewUtil";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ArrayUtil from "../util/ArrayUtil";
 import SortableListView from 'react-native-sortable-listview'
-import SafeAreaViewPlus from "../common/SafeAreaViewPlus";
+// import SafeAreaViewPlus from "../common/SafeAreaViewPlus";
 import GlobalStyles from "../res/styles/GlobalStyles";
 
 const THEME_COLOR = '#678';
@@ -152,7 +152,7 @@ class SortKeyPage extends Component {
             // style={theme.styles.navBar}
             rightButton={ViewUtil.getRightButton('保存', () => this.onSave())}
         />;
-        return <SafeAreaViewPlus
+        return <ScrollView
             style={GlobalStyles.root_container}
             topColor={THEME_COLOR}
         >
@@ -166,7 +166,7 @@ class SortKeyPage extends Component {
                 }}
                 renderRow={row => <SortCell data={row} {...this.params}/>}
             />
-        </SafeAreaViewPlus>
+        </ScrollView>
     }
 }
 

@@ -19,35 +19,35 @@ import FavoriteUtil from '../util/FavoriteUtil';
 import EventBus from 'react-native-event-bus'
 import EventTypes from '../util/EventTypes'
 
-const THEME_COLOR = "#678";
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
-export default class FavoritePage extends Component {
+class FavoritePage extends Component {
     constructor(props) {
         super(props)
         this.tabNames = ["最热", "趋势"]
     }
 
     render() {
+        const { theme } = this.props;
         let statusBar = {
-            backgroundColor: THEME_COLOR,
+            backgroundColor: theme.themeColor,
             barStyle: 'light-content'
         }
         let navigationBar = <NavigationBar
             title={"收藏"}
             statusBar={statusBar}
-            style={{ backgroundColor: THEME_COLOR }}
+            style={{ backgroundColor: theme.themeColor }}
         />
         const TabNavigator = createAppContainer(createMaterialTopTabNavigator(
             {
                 'Popular': {
-                    screen: props => <FavoriteTabPage {...props} flag={FLAG_STORAGE.flag_popular} />,//初始化Component时携带默认参数 @https://github.com/react-navigation/react-navigation/issues/2392
+                    screen: props => <FavoriteTabPage {...props} theme={theme} flag={FLAG_STORAGE.flag_popular} />,//初始化Component时携带默认参数 @https://github.com/react-navigation/react-navigation/issues/2392
                     navigationOptions: {
                         title: '最热',
                     },
                 },
                 'Trending': {
-                    screen: props => <FavoriteTabPage {...props} flag={FLAG_STORAGE.flag_trending} />,//初始化Component时携带默认参数 @https://github.com/react-navigation/react-navigation/issues/2392
+                    screen: props => <FavoriteTabPage {...props} theme={theme} flag={FLAG_STORAGE.flag_trending} />,//初始化Component时携带默认参数 @https://github.com/react-navigation/react-navigation/issues/2392
                     navigationOptions: {
                         title: '趋势',
                     },
@@ -57,7 +57,7 @@ export default class FavoritePage extends Component {
                 tabStyle: styles.tabStyle,
                 upperCaseLabel: false,
                 style: {
-                    backgroundColor: "#678",
+                    backgroundColor: theme.themeColor,
                     height: 50
                 },
                 indicatorStyle: styles.indicatorStyle,
@@ -71,6 +71,15 @@ export default class FavoritePage extends Component {
         </View>
     }
 }
+
+const mapFStateToProps = state => {
+    return {
+        theme: state.theme.theme,
+    }
+}
+
+
+export default connect(mapFStateToProps)(FavoritePage)
 
 class FavoriteTab extends Component {
     constructor(props) {
@@ -116,9 +125,11 @@ class FavoriteTab extends Component {
     }
     renderItem(data) {
         const item = data.item;
+        const { theme } = this.props;
         const Item = this.storeName === FLAG_STORAGE.flag_popular ? PopularItem : TrendingItem;
         return <Item
             projectModel={item}
+            theme={theme}
             onSelect={(callback) => {
                 NavigationUtil.goPage({
                     projectModel: item,
@@ -131,6 +142,7 @@ class FavoriteTab extends Component {
     }
     render() {
         let store = this._store();
+        let { theme } = this.props;
         return (
             <View style={styles.container}>
                 <FlatList
@@ -140,11 +152,11 @@ class FavoriteTab extends Component {
                     refreshControl={
                         <RefreshControl
                             title={"Loading"}
-                            titleColor={THEME_COLOR}
-                            colors={[THEME_COLOR]}
+                            titleColor={theme.themeColor}
+                            colors={[theme.themeColor]}
                             refreshing={store.isLoading}
                             onRefresh={() => this.loadData(true)}
-                            tintColor={THEME_COLOR}
+                            tintColor={theme.themeColor}
                         />
                     }
                 />

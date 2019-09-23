@@ -12,6 +12,7 @@ import AboutPage from '../page/about/AboutPage';
 import AboutMePage from '../page/about/AboutMePage';
 import CustomkeyPage from '../page/CustomkeyPage';
 import SortKeyPage from '../page/SortKeyPage';
+import SearchPage from '../page/SearchPage';
 export const rootCom = "Init";//设置跟路由
 
 const InitNavigator = createStackNavigator({
@@ -62,6 +63,12 @@ const MainNavigator = createStackNavigator({
     },
     SortKeyPage: {
         screen: SortKeyPage,
+        navigationOptions: {
+            header: null //禁用bar
+        }
+    },
+    SearchPage: {
+        screen: SearchPage,
         navigationOptions: {
             header: null //禁用bar
         }

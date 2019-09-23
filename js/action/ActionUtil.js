@@ -1,8 +1,17 @@
 import ProjectModel from "../model/ProjectModel";
 import Utils from "../util/Utils";
 
-//处理下拉刷新的数据
-export function handleData(actionType, dispatch, storeName, data, pageSize, favoriteDao) {
+/**
+ * 处理数据
+ * @param actionType
+ * @param dispatch
+ * @param storeName
+ * @param data
+ * @param pageSize
+ * @param favoriteDao
+ * @param params 其他参数
+ */
+export function handleData(actionType, dispatch, storeName, data, pageSize, favoriteDao,params) {
     let fixItems = [];
     if (data && data.data) {
         if (Array.isArray(data.data)) {
@@ -11,17 +20,20 @@ export function handleData(actionType, dispatch, storeName, data, pageSize, favo
             fixItems = data.data.items;
         }
     }
+    //第一次要加载的数据
     let showItems = pageSize > fixItems.length ? fixItems : fixItems.slice(0, pageSize);
-    _projectModels(showItems, favoriteDao, function (projectModels) {
+    _projectModels(showItems,favoriteDao,projectModels=>{
         dispatch({
             type: actionType,
             items: fixItems,
-            projectModels: projectModels,
+            projectModels:projectModels,
             storeName,
-            pageIndex: 1
+            pageIndex: 1,
+            ...params
         })
-    })
+    });
 }
+
 
 export async function _projectModels(showItems, favoriteDao, callback) {
     let keys = [];
@@ -34,5 +46,11 @@ export async function _projectModels(showItems, favoriteDao, callback) {
     for (let i = 0, len = showItems.length; i < len; i++) {
         projectModels.push(new ProjectModel(showItems[i], Utils.checkFavorite(showItems[i], keys)))
     }
-    if (typeof callback === "function") callback(projectModels)
+    doCallBack(callback, projectModels)
 }
+
+export const doCallBack = (callBack, object) => {
+    if (typeof callBack === 'function') {
+        callBack(object);
+    }
+};

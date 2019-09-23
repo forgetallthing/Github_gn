@@ -6,6 +6,8 @@ import { BackHandler } from "react-native";
 import { NavigationActions } from "react-navigation";
 import { connect } from 'react-redux';
 import BackPressComponent from '../common/BackPressComponent'
+import CustomTheme from './CustomTheme'
+import actions from '../action'
 
 class HomePage extends Component {
     constructor(props) {
@@ -23,6 +25,16 @@ class HomePage extends Component {
         this.backPress.componentWillUnmount();
     }
 
+    renderCustomThemeView() {
+        const { customThemeViewVisible, onShowCustomThemeView } = this.props;
+        return (<CustomTheme
+            visible={customThemeViewVisible}
+            {...this.props}
+            onClose={() => onShowCustomThemeView(false)}
+        />
+        )
+    }
+
     /** * 处理 Android 中的物理返回键 * https://reactnavigation.org/docs/en/redux-integration.html#handling-the-hardware-back-button-in-android * @returns {boolean} */
     onBackPress = () => {
         const { dispatch, nav } = this.props;
@@ -36,12 +48,21 @@ class HomePage extends Component {
 
     render() {
         NavigationUtil.navigation = this.props.navigation;
-        return <DynamicTabNavigator />
+        return <View style={{ flex: 1 }}>
+            <DynamicTabNavigator />
+            {this.renderCustomThemeView()}
+        </View>
     }
 }
 
-const mapStateToProps = state => {
-    return { nav: state.nav }
-}
+const mapStateToProps = state => ({
+    nav: state.nav,
+    customThemeViewVisible: state.theme.customThemeViewVisible,
+    theme: state.theme.theme,
+});
 
-export default connect(mapStateToProps)(HomePage)
+const mapDispatchToProps = dispatch => ({
+    onShowCustomThemeView: (show) => dispatch(actions.onShowCustomThemeView(show)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

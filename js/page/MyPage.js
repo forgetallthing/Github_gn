@@ -7,14 +7,14 @@ import GlobalStyles from '../res/styles/GlobalStyles';
 import ViewUtil from '../util/ViewUtil'
 import NavigationUtil from '../navigator/NavigationUtil'
 import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+import actions from "../action";
+import { connect } from 'react-redux';
 
-const THEME_COLOR = "#678";
-
-export default class MyPage extends Component {
+class MyPage extends Component {
 
     getItem(menu) {
-        // const {theme} = this.props;
-        return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
+        const { theme } = this.props;
+        return ViewUtil.getMenuItem(() => this.onClick(menu), menu, theme.themeColor);
     }
 
     onClick(menu) {
@@ -31,8 +31,17 @@ export default class MyPage extends Component {
             case MORE_MENU.About_Author:
                 RouterName = 'AboutMePage';
                 break;
+            case MORE_MENU.Custom_Theme:
+                const { onShowCustomThemeView } = this.props;
+                onShowCustomThemeView(true)
+                break;
             case MORE_MENU.Sort_Key:
                 RouterName = 'SortKeyPage';
+                params.flag = FLAG_LANGUAGE.flag_key;
+                break;
+            case MORE_MENU.Sort_Language:
+                RouterName = 'SortKeyPage';
+                params.flag = FLAG_LANGUAGE.flag_language;
                 break;
             case MORE_MENU.Custom_Key:
             case MORE_MENU.Custom_Language:
@@ -48,15 +57,16 @@ export default class MyPage extends Component {
     }
 
     render() {
+        const { theme } = this.props;
         let statusBar = {
-            backgroundColor: THEME_COLOR,
+            backgroundColor: theme.themeColor,
             barStyle: 'light-content',
         };
         let navigationBar =
             <NavigationBar
                 title={'我的'}
                 statusBar={statusBar}
-                style={{ backgroundColor: THEME_COLOR }}
+                style={theme.styles.navBar}
             />;
         return (
             <View style={GlobalStyles.root_container}>
@@ -72,7 +82,7 @@ export default class MyPage extends Component {
                                 size={40}
                                 style={{
                                     marginRight: 10,
-                                    // color: theme.themeColor,
+                                    color: theme.themeColor,
                                 }}
                             />
                             <Text>GitHub Popular</Text>
@@ -83,7 +93,7 @@ export default class MyPage extends Component {
                             style={{
                                 marginRight: 10,
                                 alignSelf: 'center',
-                                // color: theme.themeColor,
+                                color: theme.themeColor,
                             }} />
                     </TouchableOpacity>
                     <View style={GlobalStyles.line}></View>
@@ -124,6 +134,17 @@ export default class MyPage extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    theme: state.theme.theme,
+});
+
+const mapDispatchToProps = dispatch => ({
+    onShowCustomThemeView: (show) => dispatch(actions.onShowCustomThemeView(show)),
+});
+
+//注意：connect只是个function，并不应定非要放在export后面
+export default connect(mapStateToProps, mapDispatchToProps)(MyPage);
 
 const styles = StyleSheet.create({
     about_left: {

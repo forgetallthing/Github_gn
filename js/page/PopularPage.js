@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { DeviceInfo, Text, ActivityIndicator, StyleSheet, View, FlatList, RefreshControl } from 'react-native'
+import { TouchableOpacity, DeviceInfo, Text, ActivityIndicator, StyleSheet, View, FlatList, RefreshControl } from 'react-native'
 import {
     createMaterialTopTabNavigator,
 } from 'react-navigation-tabs';
@@ -18,10 +18,10 @@ import FavoriteUtil from '../util/FavoriteUtil';
 import EventBus from 'react-native-event-bus'
 import EventTypes from '../util/EventTypes'
 import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const URL = `https://api.github.com/search/repositories?q=`;
 const QUERY_STR = `&sort=stars`;
-const THEME_COLOR = "#678";
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
 class PopularPage extends Component {
@@ -32,7 +32,7 @@ class PopularPage extends Component {
     }
     _genTabs() {
         const tabs = {};
-        const { keys } = this.props;
+        const { keys, theme } = this.props;
         keys.forEach((item, index) => {
             if (item.checked) {
                 tabs[`tab${index}`] = {
@@ -40,7 +40,7 @@ class PopularPage extends Component {
                      * 使用参数保存props,保证screen运行时可取到props，
                      * 而item不用参数保存是因为箭头函数的this是共用forEach函数的this，所以能取到item。
                      */
-                    screen: props => <PopularTabPage {...props} tabLabel={item.name} />,
+                    screen: props => <PopularTabPage {...props} tabLabel={item.name} theme={theme} />,
                     navigationOptions: {
                         title: item.name
                     }
@@ -49,16 +49,38 @@ class PopularPage extends Component {
         })
         return tabs;
     }
+    renderRightButton() {
+        const { theme } = this.props;
+        return <TouchableOpacity
+            onPress={() => {
+                //新版本友盟SDK 时间统计方法由 track -> onEvent
+                // AnalyticsUtil.onEvent("SearchButtonClick");
+                NavigationUtil.goPage({ theme }, 'SearchPage')
+            }}
+        >
+            <View style={{ padding: 5, marginRight: 8 }}>
+                <Ionicons
+                    name={'ios-search'}
+                    size={24}
+                    style={{
+                        marginRight: 8,
+                        alignSelf: 'center',
+                        color: 'white',
+                    }} />
+            </View>
+        </TouchableOpacity>
+    }
     render() {
-        const { keys } = this.props;
+        const { keys, theme } = this.props;
         let statusBar = {
-            backgroundColor: THEME_COLOR,
+            backgroundColor: theme.themeColor,
             barStyle: 'light-content'
         }
         let navigationBar = <NavigationBar
             title={"最热"}
             statusBar={statusBar}
-            style={{ backgroundColor: THEME_COLOR }}
+            style={theme.styles.navBar}
+            // rightButton={this.renderRightButton()}
         />
         const TabNavigator = keys.length > 0 ? createAppContainer(createMaterialTopTabNavigator(
             this._genTabs(), {
@@ -67,7 +89,7 @@ class PopularPage extends Component {
                 upperCaseLabel: false,
                 scrollEnabled: true,
                 style: {
-                    backgroundColor: "#678",
+                    backgroundColor: theme.themeColor,
                     height: 50
                 },
                 indicatorStyle: styles.indicatorStyle,
@@ -85,7 +107,8 @@ class PopularPage extends Component {
 
 const mapPopularStateToProps = state => {
     return {
-        keys: state.language.keys
+        keys: state.language.keys,
+        theme: state.theme.theme,
     }
 }
 
@@ -153,7 +176,8 @@ class PopularTab extends Component {
     }
     renderItem(data) {
         const item = data.item;
-        return <PopularItem projectModel={item} onSelect={(callback) => {
+        const { theme } = this.props;
+        return <PopularItem theme={theme} projectModel={item} onSelect={(callback) => {
             NavigationUtil.goPage({
                 projectModel: item,
                 flag: FLAG_STORAGE.flag_popular,
@@ -174,6 +198,7 @@ class PopularTab extends Component {
     }
     render() {
         let store = this._store();
+        const { theme } = this.props;
         return (
             <View style={styles.container}>
                 <FlatList
@@ -183,11 +208,11 @@ class PopularTab extends Component {
                     refreshControl={
                         <RefreshControl
                             title={"Loading"}
-                            titleColor={THEME_COLOR}
-                            colors={[THEME_COLOR]}
+                            titleColor={theme.themeColor}
+                            colors={[theme.themeColor]}
                             refreshing={store.isLoading}
                             onRefresh={() => this.loadData()}
-                            tintColor={THEME_COLOR}
+                            tintColor={theme.themeColor}
                         />
                     }
                     ListFooterComponent={() => this.genIndicator()}
